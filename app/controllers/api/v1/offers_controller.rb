@@ -1,6 +1,6 @@
 class Api::V1::OffersController < ApplicationController
   before_action :authenticate_with_token!, only: [:create, :update]
-  before_action :set_offer, only: [:show, :edit, :update, :destroy]
+  # before_action :set_offer, only: [:show, :edit, :update, :destroy]
 
   respond_to :json
 
@@ -27,7 +27,7 @@ class Api::V1::OffersController < ApplicationController
   # end
 
   def index
-    respond_with Offer.all
+    respond_with current_user.offers
   end
 
   # def show
@@ -144,4 +144,4 @@ class Api::V1::OffersController < ApplicationController
   #   def offer_params
   #     params.require(:offer).permit(:item_id, :user_id, :status, :price, :quantity, :deal_open_hour, :deal_closed_hour )
   #   end
-end
+# end
