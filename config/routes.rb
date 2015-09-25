@@ -6,6 +6,7 @@ Clubber::Application.routes.draw do
     scope module: :v1 do
       resources :users, only: [:show, :create, :update, :destroy, :index]
       resources :sessions, only: [:create, :destroy]
+      resources :offers, only: [:show, :index]
     end
   end
 end

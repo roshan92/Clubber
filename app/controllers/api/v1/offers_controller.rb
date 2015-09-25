@@ -2,49 +2,50 @@ class Api::V1::OffersController < ApplicationController
   before_action :authenticate_with_token!, except: [:index_all]
   before_action :set_offer, only: [:show, :edit, :update, :destroy]
 
+  respond_to :json
+
+  # def index
+  #   if user_signed_in?
+  #     if current_user.is_admin?
+  #       @offers = Offer.all
+  #
+  #       respond_to do |format|
+  #         format.html
+  #         format.json { render json: @offers }
+  #       end
+  #     else
+  #       @offers = current_user.offers
+  #
+  #       respond_to do |format|
+  #         format.html
+  #         format.json { render json: @offers }
+  #       end
+  #     end
+  #   else
+  #     render json: {}, status: :unauthorized
+  #   end
+  # end
+
   def index
-    if user_signed_in?
-      if current_user.is_admin?
-        @offers = Offer.all
-
-        respond_to do |format|
-          format.html
-          format.json { render json: @offers }
-        end
-      else
-        @offers = current_user.offers
-
-        respond_to do |format|
-          format.html
-          format.json { render json: @offers }
-        end
-      end
-    else
-      render json: {}, status: :unauthorized
-    end
+    respond_with Offer.all
   end
 
-  def index_all
-    @offers = Offer.all
-
-    respond_to do |format|
-      format.html
-      format.json { render json: @offers }
-    end
-  end
+  # def show
+  #   if current_user.is_owner?(@offer) || current_user.is_admin?
+  #     respond_to do |format|
+  #       format.html { render :show }
+  #       format.json { render json: @offer}
+  #     end
+  #   else
+  #     respond_to do |format|
+  #       format.html { render :show, notice: 'You are not allowed to view this.' }
+  #       format.json { render json: {}, status: :unauthorized}
+  #     end
+  #   end
+  # end
 
   def show
-    if current_user.is_owner?(@offer) || current_user.is_admin?
-      respond_to do |format|
-        format.html { render :show }
-        format.json { render json: @offer}
-      end
-    else
-      respond_to do |format|
-        format.html { render :show, notice: 'You are not allowed to view this.' }
-        format.json { render json: {}, status: :unauthorized}
-      end
-    end
+    respond_with Offer.find(params[:id])
   end
 
   def new
