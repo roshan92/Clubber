@@ -25,9 +25,9 @@ class Api::V1::OffersController < ApplicationController
   #     render json: {}, status: :unauthorized
   #   end
   # end
-
   def index
-    respond_with current_user.offers
+    offers = params[:offer_ids].present? ? Offer.find(params[:offer_ids]) : Offer.all
+    respond_with offers
   end
 
   # def show
