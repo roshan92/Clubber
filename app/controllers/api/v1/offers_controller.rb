@@ -28,6 +28,8 @@ class Api::V1::OffersController < ApplicationController
   def index
     offers = params[:offer_ids].present? ? Offer.find(params[:offer_ids]) : Offer.all
     respond_with offers
+
+    # respond_with Offer.search(params)
   end
 
   # def show

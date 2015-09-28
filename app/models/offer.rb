@@ -21,4 +21,15 @@ class Offer < ActiveRecord::Base
     order(:updated_at)
   }
 
+  def self.search(params = {})
+    offers = params[:offer_ids].present? ? Offer.find(params[:offer_ids]) : Offer.all
+
+    offers = offers.filter_by_title(params[:keyword]) if params[:keyword]
+    offers = offers.above_or_equal_to_price(params[:min_price].to_f) if params[:min_price]
+    offers = offers.below_or_equal_to_price(params[:max_price].to_f) if params[:max_price]
+    offers = offers.recent(params[:recent]) if params[:recent].present?
+
+    offers
+  end
+
 end
