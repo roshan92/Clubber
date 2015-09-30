@@ -11,10 +11,54 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150925131018) do
+ActiveRecord::Schema.define(version: 20150930040219) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "bookings", force: :cascade do |t|
+    t.integer  "offer_id"
+    t.integer  "user_id"
+    t.integer  "quantity"
+    t.decimal  "amount"
+    t.boolean  "paid",       default: false
+    t.datetime "paid_on"
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+  end
+
+  add_index "bookings", ["offer_id"], name: "index_bookings_on_offer_id", using: :btree
+  add_index "bookings", ["user_id"], name: "index_bookings_on_user_id", using: :btree
+
+  create_table "events", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "event_name"
+    t.text     "event_description"
+    t.date     "event_date"
+    t.time     "event_time"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
+
+  add_index "events", ["user_id"], name: "index_events_on_user_id", using: :btree
+
+  create_table "invites", force: :cascade do |t|
+    t.integer  "attended_event_id"
+    t.integer  "guest_id"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
+
+  create_table "items", force: :cascade do |t|
+    t.string   "name"
+    t.text     "description"
+    t.decimal  "price"
+    t.integer  "user_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "items", ["user_id"], name: "index_items_on_user_id", using: :btree
 
   create_table "offers", force: :cascade do |t|
     t.decimal  "price",            default: 0.0
@@ -26,6 +70,7 @@ ActiveRecord::Schema.define(version: 20150925131018) do
     t.integer  "quantity",         default: 0
     t.datetime "created_at",                       null: false
     t.datetime "updated_at",                       null: false
+    t.integer  "item_id"
   end
 
   add_index "offers", ["user_id"], name: "index_offers_on_user_id", using: :btree
