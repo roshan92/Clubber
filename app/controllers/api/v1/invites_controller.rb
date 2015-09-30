@@ -3,7 +3,7 @@ class Api::V1::InvitesController < ApplicationController
 
 	respond_to :json
 
-	api :GET, '/invites', "Shows all invites"
+	api :GET, '/invites', "Show all invites"
   def index
     invites = params[:invite_ids].present? ? Invite.find(params[:invite_ids]) : Invite.all
     respond_with invites
