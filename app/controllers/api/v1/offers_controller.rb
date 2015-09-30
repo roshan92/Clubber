@@ -1,55 +1,31 @@
 class Api::V1::OffersController < ApplicationController
-  before_action :authenticate_with_token!, only: [:create, :update]
+  before_action :authenticate_with_token!, only: [:create, :update, :destroy]
   # before_action :set_offer, only: [:show, :edit, :update, :destroy]
 
   respond_to :json
 
-  # def index
-  #   if user_signed_in?
-  #     if current_user.is_admin?
-  #       @offers = Offer.all
-  #
-  #       respond_to do |format|
-  #         format.html
-  #         format.json { render json: @offers }
-  #       end
-  #     else
-  #       @offers = current_user.offers
-  #
-  #       respond_to do |format|
-  #         format.html
-  #         format.json { render json: @offers }
-  #       end
-  #     end
-  #   else
-  #     render json: {}, status: :unauthorized
-  #   end
-  # end
+  api :GET, '/offers', "Shows all offers"
   def index
     offers = params[:offer_ids].present? ? Offer.find(params[:offer_ids]) : Offer.all
     respond_with offers
-
     # respond_with Offer.search(params)
   end
 
-  # def show
-  #   if current_user.is_owner?(@offer) || current_user.is_admin?
-  #     respond_to do |format|
-  #       format.html { render :show }
-  #       format.json { render json: @offer}
-  #     end
-  #   else
-  #     respond_to do |format|
-  #       format.html { render :show, notice: 'You are not allowed to view this.' }
-  #       format.json { render json: {}, status: :unauthorized}
-  #     end
-  #   end
-  # end
-
+  api :GET, '/offers/:id', "Show a single offer"
   def show
     respond_with Offer.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { errors: 'No such offer exist' }, status: 422
   end
 
+  api :POST, '/offers', "Create an offer"
+  param :offer, Hash, desc: "Offer Information" do
+    param :item_id, Integer, desc: "Item ID", required: true
+    param :price, Float, desc: 'Price', required: true
+    param :quantity, Integer, desc: 'Quantity', required: true
+    param :deal_open_hour, DateTime, desc: 'Deal open hour', required: true
+    param :deal_closed_hour, DateTime, desc: 'Deal closed hour', required: true
+  end
   def create
     offer = current_user.offers.build(offer_params)
     if offer.save
@@ -59,6 +35,16 @@ class Api::V1::OffersController < ApplicationController
     end
   end
 
+  api :PUT, '/offers/:id', "Update an offer"
+  param :offer, Hash, desc: "Offer Information" do
+    param :item_id, :number, desc: "Item ID", required: true
+    param :price, :number, desc: 'Price'
+    param :quantity, :number, desc: 'Quantity'
+    param :deal_open_hour, DateTime, desc: 'Deal open hour'
+    param :deal_closed_hour, DateTime, desc: 'Deal closed hour'
+    param :status, :bool, desc: 'Offer status, default: true'
+    param :payment, :bool, desc: 'Payment status, default: false'
+  end
   def update
     offer = current_user.offers.find(params[:id])
     if offer.update(offer_params)
@@ -66,84 +52,24 @@ class Api::V1::OffersController < ApplicationController
     else
       render json: { errors: offer.errors }, status: 422
     end
+
+  rescue ActiveRecord::RecordNotFound
+    render json: { errors: 'No such offer exist' }, status: 422
   end
 
+  api :DELETE, '/offers/:id', "Delete an offer"
   def destroy
-    offer = current_user.offers.find(params[:id])
+    offer = Offer.find(params[:id])
     offer.destroy
     head 204
+
+  rescue ActiveRecord::RecordNotFound
+    render json: { errors: 'No such offer exist' }, status: 422
   end
 
   private
 
     def offer_params
-      params.require(:offer).permit(:item_id, :user_id, :status, :price, :quantity, :deal_open_hour, :deal_closed_hour )
+      params.require(:offer).permit(:item_id, :user_id, :status, :price, :payment, :quantity, :deal_open_hour, :deal_closed_hour )
     end
   end
-
-  # def new
-  #   @offer = Offer.new
-  #
-  #   if current_user.is_admin?
-  #     @item = Item.all
-  #   else
-  #     @item = Item.where(user_id: current_user.id)
-  #   end
-  # end
-  #
-  # def edit
-  #   if current_user.is_admin?
-  #     @item = Item.all
-  #   else
-  #     @item = Item.where(user_id: current_user.id)
-  #   end
-  # end
-  #
-  # def create
-  #   @offer = current_user.offers.new(offer_params)
-  #
-  #   respond_to do |format|
-  #     if @offer.save
-  #       format.html { redirect_to @offer, notice: 'Offer was successfully created.' }
-  #       format.json { render :show, status: :created, location: @offer }
-  #     else
-  #       format.html { render :new }
-  #       format.json { render json: @offer.errors, status: :unprocessable_entity }
-  #     end
-  #   end
-  # end
-  #
-  # def update
-  #   if current_user.is_owner?( @offer ) || current_user.is_admin?
-  #     respond_to do |format|
-  #       if @offer.update(offer_params)
-  #         format.html { redirect_to @offer, notice: 'Offer was successfully updated.' }
-  #         format.json { render :show, status: :ok, location: @offer }
-  #       else
-  #         format.html { render :edit }
-  #         format.json { render json: @offer.errors, status: :unprocessable_entity }
-  #       end
-  #     end
-  #   end
-  # end
-  #
-  # def destroy
-  #   @offer.destroy
-  #   respond_to do |format|
-  #     format.html { redirect_to offers_url, notice: 'Offer was successfully destroyed.' }
-  #     format.json { head :no_content }
-  #   end
-  # end
-  #
-  # private
-  #   # Use callbacks to share common setup or constraints between actions.
-  #
-  #   def set_offer
-  #     @offer = Offer.find(params[:id])
-  #   end
-  #
-  #   # Never trust parameters from the scary internet, only allow the white list through.
-  #   def offer_params
-  #     params.require(:offer).permit(:item_id, :user_id, :status, :price, :quantity, :deal_open_hour, :deal_closed_hour )
-  #   end
-# end
