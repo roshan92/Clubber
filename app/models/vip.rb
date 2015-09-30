@@ -1,0 +1,2 @@
+class Vip < User
+end
