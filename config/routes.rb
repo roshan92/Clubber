@@ -9,11 +9,13 @@ Clubber::Application.routes.draw do
         resources :items, only: [:create, :update ,:destroy]
         resources :bookings, only: [:create, :update ,:destroy]
         resources :events, only: [:create, :update ,:destroy]
+        resources :invites, only: [:create, :update ,:destroy]
       end
       resources :sessions, only: [:create, :destroy]
       resources :offers, only: [:show, :index]
       resources :bookings, only: [:show, :index]
       resources :events, only: [:show, :index]
+      resources :invites, only: [:show, :index]
     end
   end
 end
