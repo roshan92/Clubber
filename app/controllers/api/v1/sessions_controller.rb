@@ -1,4 +1,11 @@
 class Api::V1::SessionsController < ApplicationController
+  respond_to :json
+
+  api :POST, '/sessions', "User login"
+  param :session, Hash, desc: "Login credentials" do
+    param :email, String, desc: "Email", required: true
+    param :password, String, desc: 'Password', required: true
+  end
   def create
     user_password = params[:session][:password]
     user_email = params[:session][:email]
@@ -14,10 +21,16 @@ class Api::V1::SessionsController < ApplicationController
     end
   end
 
+  api :DELETE, '/sessions/:id', "User sign out"
   def destroy
-    user = User.find_by(auth_token: params[:id])
-    user.generate_authentication_token!
-    user.save
-    head 204
+    destroy_user_session
+    render json: { success: "Signed out" }, status: 200
+  end
+
+  private
+
+  def destroy_user_session
+    user = User.find(params[:id])
+    user.update(auth_token: nil)
   end
 end
