@@ -4,7 +4,7 @@ class Api::V1::OffersController < ApplicationController
 
   respond_to :json
 
-  api :GET, '/offers', "Shows all offers"
+  api :GET, '/offers', "Show all offers"
   def index
     offers = params[:offer_ids].present? ? Offer.find(params[:offer_ids]) : Offer.all
     respond_with offers

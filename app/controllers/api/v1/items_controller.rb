@@ -4,7 +4,7 @@ class Api::V1::ItemsController < ApplicationController
 
   respond_to :json
 
-  api :GET, '/items', "Shows all items"
+  api :GET, '/items', "Show all items"
   def index
     items = params[:item_ids].present? ? Item.find(params[:item_ids]) : Item.all
     respond_with items
