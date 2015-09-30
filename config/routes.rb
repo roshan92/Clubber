@@ -1,8 +1,8 @@
 Clubber::Application.routes.draw do
+  apipie
   devise_for :users
 
-  mount SabisuRails::Engine => "/sabisu_rails"
-  namespace :api, defaults: { format: :json }, path: '/' do
+  namespace :api, defaults: { format: :json }, path: '/api/v1' do
     scope module: :v1 do
       resources :users, only: [:show, :create, :update, :destroy, :index] do
         resources :offers, only: [:create, :update ,:destroy]
