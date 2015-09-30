@@ -7,12 +7,12 @@ class Api::V1::UsersController < ApplicationController
     respond_with User.all
   end
 
-  api :GET, '/users/:id', "Show user details"
+  api :GET, '/users/:id', "Show an user details"
   def show
     respond_with  User.find(params[:id])
   end
 
-  api :POST, '/users', "Create a user"
+  api :POST, '/users', "Create an user"
   param :user, Hash, desc: "User Information" do
     param :email, String, desc: "Email", required: true
     param :password, String, desc: 'Password', required: true
@@ -30,7 +30,7 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
-  api :PUT, '/users/:id', "Update a user"
+  api :PUT, '/users/:id', "Update an user"
   param :user, Hash, desc: "User Information" do
     param :email, String, desc: "Email"
     param :password, String, desc: 'Password'
@@ -49,7 +49,7 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
-  api :DELETE, '/users/:id', "Delete a user"
+  api :DELETE, '/users/:id', "Delete an user"
   def destroy
     current_user.destroy
     head 204

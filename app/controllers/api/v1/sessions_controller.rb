@@ -24,7 +24,7 @@ class Api::V1::SessionsController < ApplicationController
   api :DELETE, '/sessions/:id', "User sign out"
   def destroy
     destroy_user_session
-    render json: { success: "Signed out" }, status: 200
+    head 204
   end
 
   private
