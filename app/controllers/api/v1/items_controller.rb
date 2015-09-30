@@ -6,7 +6,7 @@ class Api::V1::ItemsController < ApplicationController
 
   api :GET, '/items', "Shows all items"
   def index
-    items = params[:item_ids].present? ? item.find(params[:item_ids]) : Item.all
+    items = params[:item_ids].present? ? Item.find(params[:item_ids]) : Item.all
     respond_with items
   end
 
